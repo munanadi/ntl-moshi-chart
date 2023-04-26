@@ -23,6 +23,7 @@ like
 ---
 
 The canvas thing on serverless envs is real challenge. 
+[This](https://github.com/okwme/serverless-canvas/) was a life safer
 
 ---
 
