@@ -60,7 +60,7 @@ exports.handler = async function (request, context) {
 
   console.log("WTF Here?");
   const writeFileAsync = promisify(fs.writeFile);
-  await writeFileAsync(`./public/${fileName}`, bufferData);
+  await writeFileAsync(`${fileName}`, bufferData);
 
   console.log("WTF THere?");
   return {
