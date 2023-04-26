@@ -19,11 +19,13 @@ like
 
 1. `ntl run dev` and hit the URL with query params
 
-
 ---
 
-The canvas thing on serverless envs is real challenge. 
+The canvas thing on serverless envs is real challenge.
 [This](https://github.com/okwme/serverless-canvas/) was a life safer
+
+add the following environment variables to netlify deploy settings (not to the .env file)
+`LD_LIBRARY_PATH` to `/var/task/node_modules/canvas/build/Release`
 
 ---
 

@@ -1,7 +1,6 @@
 const createCanvas = require("canvas");
 const ChartJSNodeCanvas = require("chartjs-node-canvas");
 const fs = require("fs");
-const path = require("path");
 const { promisify } = require("util");
 const axios = require("axios");
 
@@ -33,30 +32,7 @@ exports.handler = async function (request, context) {
   const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
 
   // TODO: Can do better, check if local static files exists
-  // const path = `${__dirname}/assets/test.png`;
-  // console.log({ path });
-  // if (fs.existsSync(path)) {
-  //   console.log("Exists! dirname");
-  // } else {
-  //   console.log("Couoldn't find dirname");
-  // }
-  // const data = await axios.get(
-  //   `https://www.${request.headers.host}/${fileName}`
-  // );
-  // const fileExists = await data.data;
-  // console.log({ fileExists });
-
-  // if (fs.existsSync(`${__dirname}/${fileName}`)) {
-  //   // return the cached file
-  //   return {
-  //     statusCode: 200,
-  //     body: JSON.stringify({
-  //       file_found: true,
-  //       file_created: false,
-  //       file_url: `https://www.${request.headers.host}/${fileName}`,
-  //     }),
-  //   };
-  // }
+  console.log("WTF?");
 
   const fetchUrl = `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`;
 
