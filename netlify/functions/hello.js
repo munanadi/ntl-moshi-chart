@@ -32,7 +32,6 @@ exports.handler = async function (request, context) {
   const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
 
   // TODO: Can do better, check if local static files exists
-  console.log("WTF?");
 
   const fetchUrl = `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`;
 
@@ -59,9 +58,11 @@ exports.handler = async function (request, context) {
 
   const bufferData = Buffer.from(chart);
 
+  console.log("WTF Here?");
   const writeFileAsync = promisify(fs.writeFile);
   await writeFileAsync(`./public/${fileName}`, bufferData);
 
+  console.log("WTF THere?");
   return {
     statusCode: 200,
     body: JSON.stringify({
