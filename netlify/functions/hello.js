@@ -32,15 +32,14 @@ exports.handler = async function (request, context) {
 
   const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
 
-  const path = `${__dirname}/assets/test.png`;
-  console.log({ path });
-  if (fs.existsSync(path)) {
-    console.log("Exists! dirname");
-  } else {
-    console.log("Couoldn't find dirname");
-  }
-
   // TODO: Can do better, check if local static files exists
+  // const path = `${__dirname}/assets/test.png`;
+  // console.log({ path });
+  // if (fs.existsSync(path)) {
+  //   console.log("Exists! dirname");
+  // } else {
+  //   console.log("Couoldn't find dirname");
+  // }
   // const data = await axios.get(
   //   `https://www.${request.headers.host}/${fileName}`
   // );
