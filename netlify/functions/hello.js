@@ -1,9 +1,9 @@
 const createCanvas = require("canvas");
 const ChartJSNodeCanvas = require("chartjs-node-canvas");
-const fs = require("fs");
-const { promisify } = require("util");
+// const fs = require("fs");
+// const { promisify } = require("util");
 const axios = require("axios");
-const s = reuqire("@supabase/supabase-js");
+const s = require("@supabase/supabase-js");
 
 const STORAGE_URL =
   "https://yprncwegyywwyzcnxoeu.supabase.co/storage/v1/object/public/moshi-charts/";
