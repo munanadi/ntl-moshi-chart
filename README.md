@@ -30,3 +30,5 @@ add the following environment variables to netlify deploy settings (not to the .
 ---
 
 ntl dev --live lets you locally replicate prod but needs live-server installed and repo linked to the one hosted in netlify. NOICE.
+
+Cannot write images to the local serverless env. Supabase? Maybe?

@@ -3,74 +3,107 @@ const ChartJSNodeCanvas = require("chartjs-node-canvas");
 const fs = require("fs");
 const { promisify } = require("util");
 const axios = require("axios");
+const s = reuqire("@supabase/supabase-js");
+
+const STORAGE_URL =
+  "https://yprncwegyywwyzcnxoeu.supabase.co/storage/v1/object/public/moshi-charts/";
+
+const supabaseUrl = process.env.SUPABASE_URL ?? "";
+const supabaseKey = process.env.SUPABASE_KEY ?? "";
+const supabase = s.createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async function (request, context) {
-  const queryParams = request.queryStringParameters;
+  try {
+    const queryParams = request.queryStringParameters;
 
-  // Check for necessary query params
-  if (
-    !queryParams?.base ||
-    !queryParams?.target ||
-    !queryParams?.interval
-  ) {
+    // Check for necessary query params
+    if (
+      !queryParams?.base ||
+      !queryParams?.target ||
+      !queryParams?.interval
+    ) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message:
+            "Request was sent without base, target or interval as query params",
+        }),
+      };
+    }
+
+    const { base, target, interval } = queryParams;
+
+    // Check if base, target and interval chart was created a day back, show return cached image.
+    const today = new Date();
+    const month = today.getUTCMonth() + 1;
+    const date = today.getUTCDate();
+
+    const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
+
+    // TODO: Can do better, check if local static files exists
+
+    const fetchUrl = `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`;
+
+    // Create chart data
+    const res = await axios.get(fetchUrl);
+    const compareData = await res.data;
+
+    const {
+      times,
+      ratios,
+      from,
+      to,
+      base_coin,
+      target_coin,
+    } = compareData.data;
+
+    const currRatio = ratios?.[ratios?.length - 1] ?? 0;
+
+    const chart = await renderCompareTokenChart({
+      times,
+      ratios,
+      chartLabel: `Price ratio | ${from} - ${to}`,
+    });
+
+    const bufferData = Buffer.from(chart);
+
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(fileName, bufferData, {
+        cacheControl: "8760",
+        contentType: "image/png",
+        upsert: false,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    console.log({ data });
+
+    const imageUrl = data.Key;
+
     return {
-      statusCode: 400,
+      statusCode: 200,
       body: JSON.stringify({
-        message:
-          "Request was sent without base, target or interval as query params",
+        file_found: false,
+        file_created: true,
+        file_url: imageUrl,
+      }),
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        file_found: false,
+        file_created: false,
+        file_url: imageUrl,
+        message: e.message,
+        error: e,
       }),
     };
   }
-
-  const { base, target, interval } = queryParams;
-
-  // Check if base, target and interval chart was created a day back, show return cached image.
-  const today = new Date();
-  const month = today.getUTCMonth() + 1;
-  const date = today.getUTCDate();
-
-  const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
-
-  // TODO: Can do better, check if local static files exists
-
-  const fetchUrl = `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`;
-
-  // Create chart data
-  const res = await axios.get(fetchUrl);
-  const compareData = await res.data;
-
-  const {
-    times,
-    ratios,
-    from,
-    to,
-    base_coin,
-    target_coin,
-  } = compareData.data;
-
-  const currRatio = ratios?.[ratios?.length - 1] ?? 0;
-
-  const chart = await renderCompareTokenChart({
-    times,
-    ratios,
-    chartLabel: `Price ratio | ${from} - ${to}`,
-  });
-
-  const bufferData = Buffer.from(chart);
-
-  console.log("WTF Here?");
-  const writeFileAsync = promisify(fs.writeFile);
-  await writeFileAsync(`${fileName}`, bufferData);
-
-  console.log("WTF THere?");
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      file_found: false,
-      file_created: true,
-      file_url: `https://www.${request.headers.host}/${fileName}`,
-    }),
-  };
 };
 
 async function renderCompareTokenChart({
