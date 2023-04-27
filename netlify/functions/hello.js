@@ -67,8 +67,15 @@ exports.handler = async function (request, context) {
 
     const bufferData = Buffer.from(chart);
 
+    const { data: fData, error: fileError } =
+      await supabase.storage
+        .from("moshi-charts")
+        .download("1.png");
+
+    console.log({ fData, error: fileError });
+
     const { data, error } = await supabase.storage
-      .from("images")
+      .from("moshi-charts")
       .upload(fileName, bufferData, {
         cacheControl: "8760",
         contentType: "image/png",
