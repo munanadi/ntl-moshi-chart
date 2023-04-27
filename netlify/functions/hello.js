@@ -1,7 +1,5 @@
 const createCanvas = require("canvas");
 const ChartJSNodeCanvas = require("chartjs-node-canvas");
-// const fs = require("fs");
-// const { promisify } = require("util");
 const axios = require("axios");
 const s = require("@supabase/supabase-js");
 
@@ -40,8 +38,33 @@ exports.handler = async function (request, context) {
 
     const fileName = `${base}-${target}-${interval}-${date}-${month}-chart.png`;
 
-    // TODO: Can do better, check if local static files exists
+    // check if  files exists
+    const { data: fetchedFiles, error: fetchedError } =
+      await supabase.storage
+        .from("moshi-charts")
+        .list(undefined, {
+          limit: 100,
+          search: `${base}-${target}-${interval}`,
+        });
 
+    // console.log({ fetchedFile, fetchedError });
+
+    const fetchedFile = fetchedFiles?.find(
+      (file) => file.name === fileName
+    );
+
+    if (fetchedFile) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          file_found: true,
+          file_created: false,
+          file_url: `${STORAGE_URL}${fetchedFile.name}`,
+        }),
+      };
+    }
+
+    // File not found, create one
     const fetchUrl = `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`;
 
     // Create chart data
@@ -57,7 +80,7 @@ exports.handler = async function (request, context) {
       target_coin,
     } = compareData.data;
 
-    const currRatio = ratios?.[ratios?.length - 1] ?? 0;
+    // const currRatio = ratios?.[ratios?.length - 1] ?? 0;
 
     const chart = await renderCompareTokenChart({
       times,
@@ -66,13 +89,6 @@ exports.handler = async function (request, context) {
     });
 
     const bufferData = Buffer.from(chart);
-
-    const { data: fData, error: fileError } =
-      await supabase.storage
-        .from("moshi-charts")
-        .download("1.png");
-
-    console.log({ fData, error: fileError });
 
     const { data, error } = await supabase.storage
       .from("moshi-charts")
@@ -86,16 +102,16 @@ exports.handler = async function (request, context) {
       throw error;
     }
 
-    console.log({ data });
+    console.log({ data, error });
 
-    const imageUrl = data.Key;
+    const imageUrl = data.path;
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         file_found: false,
         file_created: true,
-        file_url: imageUrl,
+        file_url: `${STORAGE_URL}${imageUrl}`,
       }),
     };
   } catch (e) {
@@ -103,10 +119,6 @@ exports.handler = async function (request, context) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        file_found: false,
-        file_created: false,
-        file_url: imageUrl,
-        message: e.message,
         error: e,
       }),
     };
