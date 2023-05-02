@@ -1,4 +1,4 @@
-const createCanvas = require("canvas");
+const { createCanvas } = require("canvas");
 const axios = require("axios");
 const { squarify } = require("squarify");
 const s = require("@supabase/supabase-js");
@@ -28,8 +28,6 @@ exports.handler = async function (request, context) {
           limit: 100,
           search: `heatmap-${date}-${month}`,
         });
-
-    // console.log({ fetchedFile, fetchedError });
 
     const fetchedFile = fetchedFiles?.find(
       (file) => file.name === fileName
@@ -132,7 +130,7 @@ async function renderHeatmap(data) {
   });
 
   const output = squarify(input, [], container, []);
-  const canvas = createCanvas.createCanvas(l, w);
+  const canvas = createCanvas(l, w);
   const ctx = canvas.getContext("2d");
   output.forEach((item) => {
     const fontSize = adjustFont(
@@ -166,7 +164,7 @@ async function renderHeatmap(data) {
     };
 
     // symbol (1st line)
-    // ctx.font = `bold ${fontSize}px Manrope`;
+    ctx.font = `bold ${fontSize}px Manrope`;
     // const symbolH = heightOf(ctx, item.symbol)
     const symbolW = widthOf(ctx, item.symbol);
     const symbol = {
@@ -177,7 +175,7 @@ async function renderHeatmap(data) {
     };
 
     // change percentage (3rd line)
-    // ctx.font = `${fontSize * 0.6}px Manrope`;
+    ctx.font = `${fontSize * 0.6}px Manrope`;
     const changeText = `${item.change_prefix}${item.change_1d}`;
     const changeH = heightOf(ctx, changeText);
     const changeW = widthOf(ctx, changeText);
