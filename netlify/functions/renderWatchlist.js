@@ -54,7 +54,7 @@ exports.handler = async function (request, context) {
     const filteredData = Object.values(
       watchlistData.data
     ).filter((i) =>
-      [("usdc", "usdt", "eth", "sol")].includes(
+      ["usdc", "usdt", "eth", "sol"].includes(
         i.symbol.toLowerCase()
       )
     );
@@ -166,18 +166,7 @@ async function renderWatchlist(data) {
       itemContainer.x.from + (itemContainer.pl ?? 0);
     const imageY =
       itemContainer.y.from + (itemContainer.pt ?? 0);
-    // if no imageUrl then find and use discord emoji URL
-    // if (!imageUrl && is_pair) {
-    //   const [base, target] = symbol
-    //     .split("/")
-    //     .map((s) => emojis[s.toUpperCase()]);
-    //   imageUrl =
-    //     base && target
-    //       ? [getEmojiURL(base), getEmojiURL(target)].join(
-    //           "||"
-    //         )
-    //       : "";
-    // }
+
     if (imageUrl) {
       const imageStats = {
         radius,
@@ -265,21 +254,18 @@ async function renderWatchlist(data) {
     const changeY = priceY;
     ctx.fillText(change, changeX, changeY);
 
+    console.log(sparkline_in_7d);
     // 7d chart
     const { price } = sparkline_in_7d;
     const labels = price?.map((p) => `${p}`);
-    const buffer = await renderChartImage({
-      labels,
-      data: price,
-      lineOnly: true,
-      colorConfig: {
-        borderColor:
-          price_change_percentage_7d_in_currency >= 0
-            ? ascColor
-            : descColor,
-        backgroundColor: "#fff",
-      },
-    });
+
+    const buffer = await renderChartImage(
+      "",
+      [],
+      price,
+      undefined,
+      true
+    );
     const chart = await loadImage(buffer);
     const chartW = 150;
     const chartH = 50;
@@ -414,13 +400,6 @@ async function loadAndCacheImage(imageUrl, w, h) {
   return base64Str ? await loadImage(base64Str) : null;
 }
 
-const chartCanvas = new ChartJSNodeCanvas.ChartJSNodeCanvas(
-  {
-    width: 700,
-    height: 450,
-  }
-);
-
 function getGradientColor(fromColor, toColor) {
   const canvas = createCanvas(100, 100);
   const ctx = canvas.getContext("2d");
@@ -435,13 +414,13 @@ function getGradientColor(fromColor, toColor) {
   return backgroundColor;
 }
 
-function renderChartImage({
+function renderChartImage(
   chartLabel,
   labels,
   data = [],
   colorConfig,
-  lineOnly,
-}) {
+  lineOnly
+) {
   const chartCanvas =
     new ChartJSNodeCanvas.ChartJSNodeCanvas({
       width: 700,
