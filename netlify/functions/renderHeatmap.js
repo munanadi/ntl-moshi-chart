@@ -1,6 +1,6 @@
 const { createCanvas } = require("canvas");
 const axios = require("axios");
-const { squarify } = require("squarify");
+const squarify = require("squarify");
 const s = require("@supabase/supabase-js");
 const chroma = require("chroma-js");
 
@@ -53,9 +53,16 @@ exports.handler = async function (request, context) {
     const filteredData = Object.values(
       watchlistData.data
     ).filter((i) =>
-      ["usdc", "usdt", "eth"].includes(
-        i.symbol.toLowerCase()
-      )
+      [
+        "busd",
+        "tusd",
+        "usdc",
+        "usdt",
+        "dai",
+        "frax",
+        "sol",
+        "matic",
+      ].includes(i.symbol.toLowerCase())
     );
 
     const chart = await renderHeatmap(filteredData);
@@ -129,7 +136,12 @@ async function renderHeatmap(data) {
     };
   });
 
-  const output = squarify(input, [], container, []);
+  const output = squarify.squarify(
+    squarify.normalizeData(input, (x1 - x0) * (y1 - y0)),
+    [],
+    { ...container, children: input },
+    []
+  );
   const canvas = createCanvas(l, w);
   const ctx = canvas.getContext("2d");
   output.forEach((item) => {
