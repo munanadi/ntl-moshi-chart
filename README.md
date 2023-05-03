@@ -1,23 +1,33 @@
 ## NTL Function to Produce dynamic charts
 
-I tried creating dynamic charts given
-
-1. `base`
-2. `target`
-3. `interval`
-
-with the moshi API -> `http://api.mochi.pod.town/api/v1/defi/coins/compare?base=${base}&target=${target}&interval=${interval}`
-
-Given a URL `FUNCTION_URL?base=solana&target=ethereum&interval=1` it produces a chart
-like
-
+I tried creating dynamic charts given various query params like
 <img alt="chart" src="./chart.png"/>
 
 ---
 
-##### To run locallay
+### Endpoints
+
+#### 1. ticker?base=<COIN_ID>
+
+Given a base coin this would plot 30D chart vs USD
+
+#### 2. renderHeatmap
+
+Shows overall market chart as a heatmap
+
+#### 3. renderWatchlist
+
+Shows collections of coins along with their charts as an overview
+
+---
+
+#### To run locally
 
 1. `ntl run dev` and hit the URL with query params
+
+2. `ntl dev --live` lets you locally replicate prod but needs live-server installed and repo linked to netlify.
+
+Hit `http://localhost:8888/.netlify/functions/<FUNCTION_NAME>` to test them out.
 
 ---
 
@@ -28,7 +38,3 @@ add the following environment variables to netlify deploy settings (not to the .
 `LD_LIBRARY_PATH` to `/var/task/node_modules/canvas/build/Release`
 
 ---
-
-ntl dev --live lets you locally replicate prod but needs live-server installed and repo linked to the one hosted in netlify. NOICE.
-
-Cannot write images to the local serverless env. Supabase? Maybe?
