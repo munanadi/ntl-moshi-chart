@@ -19,6 +19,10 @@ Shows overall market chart as a heatmap
 
 Shows collections of coins along with their charts as an overview
 
+#### 3. compareTickers?base=<COIN_ID>&target=<COIN_ID>&interval=<PERIOD_IN_DAYS>
+
+Shows collections of coins along with their charts as an overview
+
 ---
 
 #### To run locally

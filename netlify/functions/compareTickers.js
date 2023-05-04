@@ -80,7 +80,7 @@ exports.handler = async function (request, context) {
       target_coin,
     } = compareData.data;
 
-    // const currRatio = ratios?.[ratios?.length - 1] ?? 0;
+    const currRatio = ratios?.[ratios?.length - 1] ?? 0;
 
     const chart = await renderCompareTokenChart({
       times,
@@ -140,31 +140,21 @@ async function renderCompareTokenChart({
   return image;
 }
 
-function renderChartImage({
-  chartLabel,
-  labels,
-  data = [],
-  colorConfig,
-  lineOnly,
-}) {
+function renderChartImage({ chartLabel, labels, data }) {
   const chartCanvas =
     new ChartJSNodeCanvas.ChartJSNodeCanvas({
       width: 700,
       height: 450,
     });
 
-  if (!colorConfig) {
-    colorConfig = {
-      borderColor: "#009cdb",
-      backgroundColor: getGradientColor(
-        "rgba(53,83,192,0.9)",
-        "rgba(58,69,110,0.5)"
-      ),
-    };
-  }
-  if (lineOnly) {
-    colorConfig.backgroundColor = "rgba(0, 0, 0, 0)";
-  }
+  const colorConfig = {
+    borderColor: "#009cdb",
+    backgroundColor: getGradientColor(
+      "rgba(53,83,192,0.9)",
+      "rgba(58,69,110,0.5)"
+    ),
+  };
+
   const xAxisConfig = {
     ticks: {
       font: {
@@ -204,7 +194,7 @@ function renderChartImage({
         {
           label: chartLabel,
           data,
-          borderWidth: lineOnly ? 10 : 3,
+          borderWidth: 3,
           pointRadius: 0,
           fill: true,
           ...colorConfig,
@@ -227,27 +217,6 @@ function renderChartImage({
           },
         },
       },
-      ...(lineOnly && {
-        scales: {
-          x: {
-            grid: {
-              display: false,
-            },
-            display: false,
-          },
-          y: {
-            grid: {
-              display: false,
-            },
-            display: false,
-          },
-        },
-        plugins: {
-          legend: {
-            display: false,
-          },
-        },
-      }),
     },
   });
 }
