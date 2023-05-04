@@ -1,11 +1,20 @@
 ## NTL Function to Produce dynamic charts
 
-I tried creating dynamic charts given various query params like
+Creates dynamic charts and returns the URL pointing to the image.
+
+```json
+{
+  "file_found": "",
+  "file_created": "",
+  "file_url": ""
+}
+```
+
 <img alt="chart" src="./chart.png"/>
 
 ---
 
-### Endpoints
+## Endpoints
 
 #### 1. ticker?base=<COIN_ID>
 
@@ -19,9 +28,9 @@ Shows overall market chart as a heatmap
 
 Shows collections of coins along with their charts as an overview
 
-#### 3. compareTickers?base=<COIN_ID>&target=<COIN_ID>&interval=<PERIOD_IN_DAYS>
+#### 4. compareTickers?base=<COIN_ID>&target=<COIN_ID>&interval=<PERIOD_IN_DAYS>
 
-Shows collections of coins along with their charts as an overview
+Chart for base/target for a period of 30 days
 
 ---
 
