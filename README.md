@@ -36,7 +36,7 @@ Chart for base/target for a period of 30 days
 
 ## Tech used
 
-1. [Moshi's](https://github.com/consolelabs/mochi-discord/blob/9b89c55e06a8cf5f1750d6994c46ea75e710334f/src/commands/heatmap/index/processor.ts#L52) discord bot code was used to generate the charts
+1. [Mochi's](https://github.com/consolelabs/mochi-discord/blob/9b89c55e06a8cf5f1750d6994c46ea75e710334f/src/commands/heatmap/index/processor.ts#L52) discord bot code was used to generate the charts
 
 2. [Netlify functions](https://www.netlify.com/products/functions/) to generate the charts dynamically.
 
